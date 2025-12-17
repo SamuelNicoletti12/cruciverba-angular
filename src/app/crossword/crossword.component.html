@@ -1,0 +1,35 @@
+<div class="page">
+  <h1 class="title">Cruciverba dei ricordi</h1>
+
+  <div class="clue-block" *ngFor="let row of grid; let r = index">
+    <div class="question">
+      {{ clues[r]?.question }}
+    </div>
+
+    <div class="grid single-row">
+      <div class="row">
+        <input
+          *ngFor="let cell of row; let c = index"
+          class="cell"
+          maxlength="1"
+          inputmode="text"
+          autocapitalize="characters"
+          [(ngModel)]="cell.letter"
+          (keyup)="handleKey($event, r, c)"
+          [attr.data-r]="r"
+          [attr.data-c]="c"
+          [ngClass]="{
+            correct: cell.correct,
+            wrong: cell.correct === false
+          }"
+        />
+      </div>
+    </div>
+  </div>
+
+  <button (click)="checkAll()">Verifica</button>
+
+  <div class="secret" *ngIf="allCorrect">
+    🎉 <strong>DAJE LAUREATO</strong> 🎓
+  </div>
+</div>
