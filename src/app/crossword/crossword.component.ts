@@ -138,6 +138,14 @@ export class CrosswordComponent {
     }
   }
 
+  onInput(r: number, c: number) {
+
+    if (this.grid[r][c].letter && c < this.grid[r].length - 1) {
+      setTimeout(() => {
+        this.getInput(r, c + 1)?.focus();
+      });
+    }
+  }
 
   getInput(r: number, c: number): HTMLInputElement | null {
     return document.querySelector(
