@@ -19,7 +19,7 @@ export class CrosswordComponent {
     },
     {
       question: 'Cosa ha cantato Riccardo in studio?',
-      answer: 'ILPANNOCARTATEPREGONO'
+      answer: 'ILNASTROCARTATEPREGONO'
     },
     {
       question: 'Cosa ti ho lanciato cadendo dalla sedia a casa mia?',
@@ -60,6 +60,10 @@ export class CrosswordComponent {
     {
       question: 'Che soprannome ha dato Demon a Rebeka?',
       answer: 'BARBIEKLAUS'
+    },
+    {
+      question: 'Quali sono gli effetti di una papera?',
+      answer: 'TRASFORMAZIONE'
     }
   ];
 
@@ -69,9 +73,10 @@ export class CrosswordComponent {
     this.createGrid();
   }
 
+  // CREA LA GRIGLIA
   createGrid() {
     this.grid = this.clues.map((clue, r) =>
-      clue.answer.split('').map((letter, c): Cell => ({
+      clue.answer.split('').map((letter, c) => ({
         row: r,
         col: c,
         letter: '',
@@ -82,25 +87,22 @@ export class CrosswordComponent {
     );
   }
 
+  // INPUT → AVANZA (FUNZIONA SU MOBILE E PC)
+  onInput(r: number, c: number) {
+    const cell = this.grid[r][c];
 
-  checkAll() {
-    this.grid.forEach(row =>
-      row.forEach(cell => {
-        cell.correct =
-          cell.letter.toUpperCase() === cell.solution;
-      })
-    );
+    if (!cell.letter) return;
+
+    cell.letter = cell.letter.toUpperCase();
+
+    setTimeout(() => {
+      this.getInput(r, c + 1)?.focus();
+    }, 0);
   }
 
-  get allCorrect(): boolean {
-    return this.grid.every(row =>
-      row.every(cell => cell.correct)
-    );
-  }
-
+  // TASTI SPECIALI
   handleKey(event: KeyboardEvent, r: number, c: number) {
     const key = event.key;
-
 
     if (key === 'Backspace') {
       if (!this.grid[r][c].letter && c > 0) {
@@ -108,7 +110,6 @@ export class CrosswordComponent {
       }
       return;
     }
-
 
     if (key === 'ArrowRight') {
       this.getInput(r, c + 1)?.focus();
@@ -129,24 +130,26 @@ export class CrosswordComponent {
       this.getInput(r - 1, c)?.focus();
       return;
     }
-
-
-    if (/^[a-zA-Z]$/.test(key)) {
-      setTimeout(() => {
-        this.getInput(r, c + 1)?.focus();
-      });
-    }
   }
 
-  onInput(r: number, c: number) {
-
-    if (this.grid[r][c].letter && c < this.grid[r].length - 1) {
-      setTimeout(() => {
-        this.getInput(r, c + 1)?.focus();
-      });
-    }
+  // VERIFICA
+  checkAll() {
+    this.grid.forEach(row =>
+      row.forEach(cell => {
+        cell.correct =
+          cell.letter.toUpperCase() === cell.solution;
+      })
+    );
   }
 
+  // SEGRETO
+  get allCorrect(): boolean {
+    return this.grid.every(row =>
+      row.every(cell => cell.correct === true)
+    );
+  }
+
+  // RECUPERA INPUT
   getInput(r: number, c: number): HTMLInputElement | null {
     return document.querySelector(
       `input[data-r="${r}"][data-c="${c}"]`
