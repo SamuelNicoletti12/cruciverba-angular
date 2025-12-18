@@ -3,7 +3,7 @@
 
   <div class="clue-block" *ngFor="let row of grid; let r = index">
     <div class="question">
-      {{ clues[r]?.question }}
+      {{ clues[r].question }}
     </div>
 
     <div class="grid single-row">
@@ -14,8 +14,10 @@
           maxlength="1"
           inputmode="text"
           autocapitalize="characters"
+          autocomplete="off"
           [(ngModel)]="cell.letter"
-          (input)="onInput($event, r, c)"
+          (input)="onInput(r, c)"
+          (keydown)="onKeyDown($event, r, c)"
           [attr.data-r]="r"
           [attr.data-c]="c"
           [ngClass]="{

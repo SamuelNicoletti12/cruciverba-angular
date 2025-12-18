@@ -22,8 +22,8 @@ export class CrosswordComponent {
     { question: 'Croccante, burroso, crema e cioccolato?', answer: 'PAINSWISSE' },
     { question: 'Persone che non sopporti?', answer: 'NAPOLETANI' },
     { question: 'Il mio amico....?', answer: 'PINGUINO' },
-    { question: 'è diventata parte integrante del tuo freezer?', answer: 'PASTAFROLLA' },
-    { question: 'è la stessa di einstain?', answer: 'ARIA' },
+    { question: 'È diventata parte integrante del tuo freezer?', answer: 'PASTAFROLLA' },
+    { question: 'È la stessa di Einstein?', answer: 'ARIA' },
     { question: 'Che soprannome ha dato Demon a Rebeka?', answer: 'BARBIEKLAUS' },
     { question: 'Quali sono gli effetti di una papera?', answer: 'TRASFORMAZIONE' }
   ];
@@ -47,64 +47,33 @@ export class CrosswordComponent {
     );
   }
 
-  onInput(event: Event, r: number, c: number) {
-    const input = event.target as HTMLInputElement;
+  // MOBILE SAFE INPUT
+  onInput(r: number, c: number) {
     const cell = this.grid[r][c];
+    if (!cell.letter) return;
 
-
-    if (!input.value || input.value.length !== 1) {
-      input.value = input.value.charAt(0) || '';
-      return;
-    }
-
-
-    const letter = input.value.toUpperCase();
-    cell.letter = letter;
-    input.value = letter;
-
+    cell.letter = cell.letter.slice(-1).toUpperCase();
 
     const next = this.getInput(r, c + 1);
-    if (next) {
-
-      requestAnimationFrame(() => {
-        next.focus();
-      });
-    }
+    if (next) next.focus();
   }
 
-  handleKey(event: KeyboardEvent, r: number, c: number) {
+  // TASTI SPECIALI (NO LAG)
+  onKeyDown(event: KeyboardEvent, r: number, c: number) {
     const key = event.key;
 
     if (key === 'Backspace') {
       if (!this.grid[r][c].letter && c > 0) {
-        requestAnimationFrame(() => {
-          this.getInput(r, c - 1)?.focus();
-        });
+        this.getInput(r, c - 1)?.focus();
       }
       return;
     }
 
-    if (key === 'ArrowRight') {
-      this.getInput(r, c + 1)?.focus();
-      return;
-    }
-
-    if (key === 'ArrowLeft') {
-      this.getInput(r, c - 1)?.focus();
-      return;
-    }
-
-    if (key === 'ArrowDown') {
-      this.getInput(r + 1, c)?.focus();
-      return;
-    }
-
-    if (key === 'ArrowUp') {
-      this.getInput(r - 1, c)?.focus();
-      return;
-    }
+    if (key === 'ArrowRight') this.getInput(r, c + 1)?.focus();
+    if (key === 'ArrowLeft') this.getInput(r, c - 1)?.focus();
+    if (key === 'ArrowDown') this.getInput(r + 1, c)?.focus();
+    if (key === 'ArrowUp') this.getInput(r - 1, c)?.focus();
   }
-
 
   checkAll() {
     this.grid.forEach(row =>
@@ -119,7 +88,6 @@ export class CrosswordComponent {
       row.every(cell => cell.correct === true)
     );
   }
-
 
   getInput(r: number, c: number): HTMLInputElement | null {
     return document.querySelector(
