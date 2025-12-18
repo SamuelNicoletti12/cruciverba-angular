@@ -47,35 +47,38 @@ export class CrosswordComponent {
     );
   }
 
-  // ✅ SCRITTURA – STABILE SU MOBILE
+  /* =========================
+     SCRITTURA (PC + MOBILE)
+     ========================= */
   onModelChange(r: number, c: number, value: string) {
     if (!value) return;
 
     const cell = this.grid[r][c];
-    cell.letter = value.slice(-1).toUpperCase();
 
-    // 👉 Avanza SOLO su PC (tastiera fisica)
-    if (!this.isMobile()) {
+    // prende sempre SOLO l’ultimo carattere
+    cell.letter = value.slice(-1).toUpperCase();
+    cell.correct = undefined;
+
+    // ⏱️ micro-delay → evita perdita lettere su mobile
+    setTimeout(() => {
       this.focusNext(r, c);
-    }
+    }, 0);
   }
 
-
-  // ✅ BACKSPACE + FRECCE
+  /* =========================
+     TASTI SPECIALI
+     ========================= */
   onKeyDown(event: KeyboardEvent, r: number, c: number) {
+
     if (event.key === 'Backspace') {
       if (!this.grid[r][c].letter && c > 0) {
         this.focusPrev(r, c);
       }
+      return;
     }
 
     if (event.key === 'ArrowRight') this.focusNext(r, c);
     if (event.key === 'ArrowLeft') this.focusPrev(r, c);
-  }
-
-
-  isMobile(): boolean {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
   focusNext(r: number, c: number) {
@@ -86,6 +89,9 @@ export class CrosswordComponent {
     this.getInput(r, c - 1)?.focus();
   }
 
+  /* =========================
+     VERIFICA
+     ========================= */
   checkAll() {
     this.grid.forEach(row =>
       row.forEach(cell => {
@@ -100,6 +106,9 @@ export class CrosswordComponent {
     );
   }
 
+  /* =========================
+     DOM ACCESS
+     ========================= */
   getInput(r: number, c: number): HTMLInputElement | null {
     return document.querySelector(
       `input[data-r="${r}"][data-c="${c}"]`
