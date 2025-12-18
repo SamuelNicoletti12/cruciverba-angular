@@ -54,9 +54,12 @@ export class CrosswordComponent {
     const cell = this.grid[r][c];
     cell.letter = value.slice(-1).toUpperCase();
 
-    // avanza SOLO se la cella è piena
-    this.focusNext(r, c);
+    // 👉 Avanza SOLO su PC (tastiera fisica)
+    if (!this.isMobile()) {
+      this.focusNext(r, c);
+    }
   }
+
 
   // ✅ BACKSPACE + FRECCE
   onKeyDown(event: KeyboardEvent, r: number, c: number) {
@@ -68,6 +71,11 @@ export class CrosswordComponent {
 
     if (event.key === 'ArrowRight') this.focusNext(r, c);
     if (event.key === 'ArrowLeft') this.focusPrev(r, c);
+  }
+
+
+  isMobile(): boolean {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
   focusNext(r: number, c: number) {
