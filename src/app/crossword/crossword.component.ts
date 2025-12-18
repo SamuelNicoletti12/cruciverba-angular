@@ -47,21 +47,31 @@ export class CrosswordComponent {
     );
   }
 
-  /* ===== INPUT (MOBILE FRIENDLY) ===== */
-  onInput(r: number, c: number) {
+  onInput(event: Event, r: number, c: number) {
+    const input = event.target as HTMLInputElement;
     const cell = this.grid[r][c];
 
-    if (!cell.letter) return;
 
-    cell.letter = cell.letter.toUpperCase();
+    if (!input.value || input.value.length !== 1) {
+      input.value = input.value.charAt(0) || '';
+      return;
+    }
 
-    // requestAnimationFrame → niente lag su mobile
-    requestAnimationFrame(() => {
-      this.getInput(r, c + 1)?.focus();
-    });
+
+    const letter = input.value.toUpperCase();
+    cell.letter = letter;
+    input.value = letter;
+
+
+    const next = this.getInput(r, c + 1);
+    if (next) {
+
+      requestAnimationFrame(() => {
+        next.focus();
+      });
+    }
   }
 
-  /* ===== TASTI SPECIALI ===== */
   handleKey(event: KeyboardEvent, r: number, c: number) {
     const key = event.key;
 
@@ -95,7 +105,7 @@ export class CrosswordComponent {
     }
   }
 
-  /* ===== VERIFICA ===== */
+
   checkAll() {
     this.grid.forEach(row =>
       row.forEach(cell => {
@@ -110,7 +120,7 @@ export class CrosswordComponent {
     );
   }
 
-  /* ===== DOM ===== */
+
   getInput(r: number, c: number): HTMLInputElement | null {
     return document.querySelector(
       `input[data-r="${r}"][data-c="${c}"]`

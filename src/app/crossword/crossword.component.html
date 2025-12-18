@@ -15,8 +15,7 @@
           inputmode="text"
           autocapitalize="characters"
           [(ngModel)]="cell.letter"
-          (input)="onInput(r, c)"
-          (keydown)="handleKey($event, r, c)"
+          (input)="onInput($event, r, c)"
           [attr.data-r]="r"
           [attr.data-c]="c"
           [ngClass]="{
