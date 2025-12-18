@@ -14,14 +14,13 @@
           maxlength="1"
           inputmode="text"
           autocapitalize="characters"
-          autocomplete="off"
           [(ngModel)]="cell.letter"
-          (input)="onInput(r, c)"
+          (ngModelChange)="onModelChange(r, c, $event)"
           (keydown)="onKeyDown($event, r, c)"
           [attr.data-r]="r"
           [attr.data-c]="c"
           [ngClass]="{
-            correct: cell.correct,
+            correct: cell.correct === true,
             wrong: cell.correct === false
           }"
         />

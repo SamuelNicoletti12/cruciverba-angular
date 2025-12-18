@@ -22,8 +22,8 @@ export class CrosswordComponent {
     { question: 'Croccante, burroso, crema e cioccolato?', answer: 'PAINSWISSE' },
     { question: 'Persone che non sopporti?', answer: 'NAPOLETANI' },
     { question: 'Il mio amico....?', answer: 'PINGUINO' },
-    { question: 'È diventata parte integrante del tuo freezer?', answer: 'PASTAFROLLA' },
-    { question: 'È la stessa di Einstein?', answer: 'ARIA' },
+    { question: 'è diventata parte integrante del tuo freezer?', answer: 'PASTAFROLLA' },
+    { question: 'è la stessa di einstain?', answer: 'ARIA' },
     { question: 'Che soprannome ha dato Demon a Rebeka?', answer: 'BARBIEKLAUS' },
     { question: 'Quali sono gli effetti di una papera?', answer: 'TRASFORMAZIONE' }
   ];
@@ -47,32 +47,35 @@ export class CrosswordComponent {
     );
   }
 
-  // MOBILE SAFE INPUT
-  onInput(r: number, c: number) {
+  // ✅ SCRITTURA – STABILE SU MOBILE
+  onModelChange(r: number, c: number, value: string) {
+    if (!value) return;
+
     const cell = this.grid[r][c];
-    if (!cell.letter) return;
+    cell.letter = value.slice(-1).toUpperCase();
 
-    cell.letter = cell.letter.slice(-1).toUpperCase();
-
-    const next = this.getInput(r, c + 1);
-    if (next) next.focus();
+    // avanza SOLO se la cella è piena
+    this.focusNext(r, c);
   }
 
-  // TASTI SPECIALI (NO LAG)
+  // ✅ BACKSPACE + FRECCE
   onKeyDown(event: KeyboardEvent, r: number, c: number) {
-    const key = event.key;
-
-    if (key === 'Backspace') {
+    if (event.key === 'Backspace') {
       if (!this.grid[r][c].letter && c > 0) {
-        this.getInput(r, c - 1)?.focus();
+        this.focusPrev(r, c);
       }
-      return;
     }
 
-    if (key === 'ArrowRight') this.getInput(r, c + 1)?.focus();
-    if (key === 'ArrowLeft') this.getInput(r, c - 1)?.focus();
-    if (key === 'ArrowDown') this.getInput(r + 1, c)?.focus();
-    if (key === 'ArrowUp') this.getInput(r - 1, c)?.focus();
+    if (event.key === 'ArrowRight') this.focusNext(r, c);
+    if (event.key === 'ArrowLeft') this.focusPrev(r, c);
+  }
+
+  focusNext(r: number, c: number) {
+    this.getInput(r, c + 1)?.focus();
+  }
+
+  focusPrev(r: number, c: number) {
+    this.getInput(r, c - 1)?.focus();
   }
 
   checkAll() {
